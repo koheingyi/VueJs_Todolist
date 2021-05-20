@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VueJs Todo List</title>
+<link rel="stylesheet" href="./bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" href="./animate_it1/animate.css">
+</head>
+<style>
+    .done{
+        text-decoration:line-through !important;
+       
+    }
+    .d{
+        animation:  shakeX 0.5s;
+    }
+    .listani{
+        animation:  fadeInDown 0.5s;
+    }
+   .deleted{
+    animation:  backOutLeft 0.5s;
+   }
+</style>
+<body>
+    <div class="container" id="vue">
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <div class="mt-5">
+                    <h5>To Do List</h5>
+                    <div class="form-row mt-3">
+                        <div class="col-10" >
+                       
+                            <input  type="text" v-model="Newmessage" class=" form-control" placeholder="Say Something" @keyup.enter="create()">
+                        </div>
+                        <div class="col-2 me-2">
+                            <button class="btn btn-outline-primary" @click="create() ">
+                                <i class="fas fa-plus-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+               </div>
+               <div class="d-flex justify-content-between align-items-center mt-3">
+                <h5>Job List{{lists.length>1 ? "s":""}}</h5>
+                <span v-if="lists.length>0 && totoldone === lists.length" class="badge bg-success badge-pill">
+                    All Done
+                     <i class="far fa-check-circle"></i>
+                </span>
+
+                <span v-else class="badge bg-primary badge-pill">Done{{totoldone}}</span>
+                </div>
+                 <ul class="mt-3 list-group">
+                    <div  v-if="lists.length<1">
+                        <h6 class=" border rounded-pill text-center p-3 text-warning">
+                            There is Nothing to Do!
+                        </h6>
+                      
+                    </div>
+                    <li v-else="" v-for="list in lists" :key="list.id"  :class="['d-flex align-items-center justify-content-between list-group-item  listani',{'deleted':list.todel}]"  @dblclick="list.isedit =true" >
+                        <input v-if="list.isedit" type="text"  v-model="list.message" @keyup.enter="list.isedit =false" class=" form-control-lg mr-2">
+                        <div v-else class="custom-control custom-checkbox " >
+                                <input  type="checkbox"  v-model="list.isdone" class="custom-control-input " :id="'customcheck-1'+list.id" >
+                                <label :class="['custom-control-label',{'done':list.isdone,'d':list.isdone  }]" :for="'customcheck-1'+list.id" :title="toedit" >{{list.message}}</label>
+                        </div>
+                        
+                        <button class="btn btn-outline-danger" @click="[list.todel=true,del(list.id)]">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </li>
+                </ul>
+                <!-- <ul class="list-group">
+                    <li :class="['list-group-item d-flex justify-content-between align-items-center',{'done':list.isdone}]" v-for="list in lists" :key="list.id" @dblclick="list.isedit=true">
+                        <input v-if="list.isedit" type="text" v-model="list.message" class="form-control" @keyup.enter="list.isedit=false">
+                     <input v-else class="form-check-input me-3" type="checkbox" v-model="list.isdone" value="" aria-label="..." >
+                     {{list.message}}
+                      <i class="fas fa-trash-alt text-danger" @click="del(list.id)"></i>
+                      
+                    </li>
+                  
+                  </ul> -->
+                   
+                        
+                  
+                
+            </div>
+        </div>
+    </div>
+    <script src="./jquery-3.3.1.min.js"></script>
+    <script src="./bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script>
+        let app=new Vue({
+            el:"#vue",
+            data:{
+                currentId:0,
+                Newmessage:"",
+                toedit:"Double Click to edit",
+                lists:[]
+            },
+            computed:{
+                totoldone(){
+                        return this.lists.filter(el=>el.isdone ===true).length;
+                }
+            },
+            methods:{
+                create(){
+                    this.currentId++;
+                    this.lists.push(
+                    { id:this.currentId,
+                    message:this.Newmessage,
+                    isdone:false,
+                    isedit:false,
+                    todel:false
+                }
+                    )
+                    this.Newmessage=""
+                },
+                del(x){
+                    console.log(x)
+                  if(confirm("Are you sure want to delete?")){
+                    setTimeout(()=>{
+                        this.lists=this.lists.filter(el=>el.id !==x)
+                    },600)
+                  }
+                  
+                }
+
+                
+            }
+        })
+    </script>
+</body>
+</html>
